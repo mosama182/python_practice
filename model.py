@@ -3,6 +3,9 @@
 # a linear model to data
 
 import numpy as np
+import torch.nn as nn
+
+from data import LinearDataGen
 
 class ModelLinearRegression():
     """
@@ -39,29 +42,34 @@ class ModelLinearRegression():
         return error
 
 
+class ModelNNLinearRegression(nn.Module):
+
+    def __init__(self, d_features=1, output_size=1):
+        super().__init__()
+        self.d = d_features # number of parameters 
+        self.net = nn.Linear(in_features=d_features, out_features=output_size)
+
+    
+    def forward(self, X):
+        """
+        X : n x d_features tensor
+        """
+        return self.net(X)
+    
 
 if __name__ == "__main__":
 
-    # generate data
-    theta_star = np.array([1, 2])
-    ndata = 1000
-    X = np.concatenate([np.ones((ndata, 1)), np.linspace(start=-5, stop=10, num=ndata).reshape(-1, 1)], axis=1)
-    y = X @ theta_star
-    y = y.reshape(-1, 1)
-    y += np.random.normal(loc=0, scale=0.2, size=(ndata, 1))
+    linear_data = LinearDataGen(ndata=1000)
+    Xtrain, ytrain, Xtest, ytest = linear_data.get_train_test_data()
 
-    # split training and test
-    indices = np.arange(ndata)
-    np.random.shuffle(indices)
-    train_indices = indices[:800]
-    test_indices = indices[800:]
-    Xtrain, ytrain = X[train_indices], y[train_indices]
-    Xtest, ytest = X[test_indices], y[test_indices]
-
-    # define model
+    # define least squares model
     linear_model = ModelLinearRegression(d=2)
     linear_model.fit(Xtrain, ytrain)
-    print(f"True parameters: {theta_star}, estimated parameters: {linear_model.parm}")
+    print(f"True parameters: {linear_data.theta_star}, estimated parameters: {linear_model.parm}")
 
     mse_test = linear_model.error(Xtest, ytest)
     print(f"MSE on test set: {mse_test}")
+    
+
+    
+
