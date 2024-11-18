@@ -50,12 +50,40 @@ def count_occurence(array, left, right, majority):
     
     return array[left:right+1].count(majority)
 
+
+def two_sum(array, target):
+
+    seen = {}
+
+    for i, elem in enumerate(array):
+        diff = target - elem
+        if diff in seen:
+            return [seen[diff], i]
+        else:
+            seen[elem] = i
+
+    return []
+
     
 if __name__ == "__main__":
 
+    # =========== #
+    # binary search
+    # =========== #
     #array = [0, 1, 2, 3, 4, 5]
     #target = -1
     #print(binary_search(array, target))
 
-    array = [2, 2, 3, 3, 3]
-    print(majority_element(array, 0, len(array)-1))
+    # ============== #
+    # majority element
+    # ============== #
+    #array = [2, 2, 3, 3, 3]
+    #print(majority_element(array, 0, len(array)-1))
+
+    # ====== #
+    # two sum
+    # ====== #
+    array = [1, 2, 3]
+    target = 3
+    print(two_sum(array, target))
+
